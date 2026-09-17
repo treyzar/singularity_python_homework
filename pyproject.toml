@@ -1,0 +1,50 @@
+[tool.poetry]
+name = "bank-widget"
+version = "0.1.0"
+description = "Бэкенд для виджета последних успешных банковских операций клиента"
+authors = ["Student <student@example.com>"]
+packages = [{ include = "src" }]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+[tool.poetry.group.lint.dependencies]
+flake8 = "^7.1.0"
+black = "^24.8.0"
+isort = "^5.13.2"
+mypy = "^1.11.2"
+
+[tool.black]
+line-length = 119
+target-version = ["py312"]
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | \.mypy_cache
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 119
+multi_line_output = 3
+include_trailing_comma = true
+known_first_party = ["src"]
+skip = [".venv", ".git", ".mypy_cache", "build", "dist"]
+
+[tool.mypy]
+python_version = "3.12"
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+warn_return_any = true
+warn_unused_ignores = true
+no_implicit_optional = true
+strict_equality = true
+exclude = '(\.venv|build|dist)'
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
