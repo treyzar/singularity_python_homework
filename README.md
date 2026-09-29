@@ -68,6 +68,35 @@ for card_number in card_number_generator(1, 3):
 от 1 до 9999999999999999 и выдает номера в формате `XXXX XXXX XXXX XXXX`; при
 некорректных границах выбрасывает `ValueError`.
 
+## Декоратор log
+
+Модуль `src/decorators.py` содержит декоратор `log`, который логирует результат
+вызова функции. Если передан необязательный аргумент `filename`, логи
+дописываются в этот файл, иначе выводятся в консоль. При ошибке записывается
+имя функции, тип ошибки и входные параметры, а исключение пробрасывается дальше.
+
+```python
+from src.decorators import log
+
+
+@log(filename="mylog.txt")
+def my_function(x, y):
+    return x + y
+
+
+my_function(1, 2)
+# в mylog.txt: my_function ok
+# при ошибке:  my_function error: TypeError. Inputs: (1, 'a'), {}
+
+
+@log()
+def divide(x, y):
+    return x / y
+
+
+divide(1, 2)  # в консоль: divide ok
+```
+
 ## Тестирование
 
 Тесты написаны на `pytest` и лежат в директории `tests/`: для каждого модуля
