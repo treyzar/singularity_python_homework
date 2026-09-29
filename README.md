@@ -38,6 +38,36 @@ ascending_operations = sort_by_date(operations, reverse=False)
 `sort_by_date` принимает список операций и необязательный флаг `reverse`.
 Обе функции возвращают новый список и не изменяют исходный.
 
+## Генераторы
+
+Модуль `src/generators.py` содержит функции для работы с большими списками
+транзакций без создания промежуточных списков.
+
+```python
+from src.generators import card_number_generator, filter_by_currency, transaction_descriptions
+
+# Итератор по транзакциям в заданной валюте (по коду валюты, например USD).
+usd_transactions = filter_by_currency(transactions, "USD")
+print(next(usd_transactions))
+
+# Генератор описаний операций по очереди.
+descriptions = transaction_descriptions(transactions)
+print(next(descriptions))  # Перевод организации
+
+# Генератор номеров карт от start до stop включительно.
+for card_number in card_number_generator(1, 3):
+    print(card_number)
+# 0000 0000 0000 0001
+# 0000 0000 0000 0002
+# 0000 0000 0000 0003
+```
+
+`filter_by_currency` принимает список транзакций и код валюты, возвращает
+итератор. `transaction_descriptions` принимает список транзакций и по запросу
+выдает поле `description`. `card_number_generator` принимает границы диапазона
+от 1 до 9999999999999999 и выдает номера в формате `XXXX XXXX XXXX XXXX`; при
+некорректных границах выбрасывает `ValueError`.
+
 ## Тестирование
 
 Тесты написаны на `pytest` и лежат в директории `tests/`: для каждого модуля
@@ -59,4 +89,4 @@ poetry run pytest --cov=src --cov-report=html
 ```
 
 Отчет появится в папке `htmlcov/` (откройте `htmlcov/index.html`). Текущее
-покрытие кода в `src/` — 88%.
+покрытие кода в `src/` — 89%.
