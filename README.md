@@ -37,3 +37,26 @@ ascending_operations = sort_by_date(operations, reverse=False)
 `filter_by_state` принимает список операций и необязательный статус `state`.
 `sort_by_date` принимает список операций и необязательный флаг `reverse`.
 Обе функции возвращают новый список и не изменяют исходный.
+
+## Тестирование
+
+Тесты написаны на `pytest` и лежат в директории `tests/`: для каждого модуля
+из `src/` есть отдельный файл (`test_masks.py`, `test_widget.py`,
+`test_processing.py`). Общие тестовые данные вынесены в фикстуры в
+`tests/conftest.py`, а разные входные данные проверяются через
+`@pytest.mark.parametrize`.
+
+Запуск тестов:
+
+```bash
+poetry run pytest
+```
+
+Запуск тестов с оценкой покрытия и генерацией HTML-отчета:
+
+```bash
+poetry run pytest --cov=src --cov-report=html
+```
+
+Отчет появится в папке `htmlcov/` (откройте `htmlcov/index.html`). Текущее
+покрытие кода в `src/` — 88%.
