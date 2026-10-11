@@ -1,3 +1,5 @@
+import logging
+
 import pytest
 
 from src.masks import get_mask_account, get_mask_card_number
@@ -49,3 +51,22 @@ def test_get_mask_account_lengths(account_number: str, expected: str) -> None:
 def test_get_mask_account_invalid(account_number: str) -> None:
     with pytest.raises(ValueError, match="минимум 4 цифры"):
         get_mask_account(account_number)
+
+
+def test_masks_log_success(caplog: pytest.LogCaptureFixture, valid_card_number: str) -> None:
+    with caplog.at_level(logging.DEBUG, logger="masks"):
+        get_mask_card_number(valid_card_number)
+        get_mask_account("73654108430135874305")
+
+    assert ("masks", logging.INFO, "Номер карты замаскирован: 7000 79** **** 6361") in caplog.record_tuples
+    assert ("masks", logging.INFO, "Номер счета замаскирован: **4305") in caplog.record_tuples
+
+
+def test_masks_log_errors(caplog: pytest.LogCaptureFixture) -> None:
+    with pytest.raises(ValueError):
+        get_mask_card_number("123")
+    with pytest.raises(ValueError):
+        get_mask_account("12")
+
+    error_records = [record for record in caplog.records if record.name == "masks" and record.levelno == logging.ERROR]
+    assert len(error_records) == 2
