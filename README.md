@@ -97,6 +97,34 @@ def divide(x, y):
 divide(1, 2)  # в консоль: divide ok
 ```
 
+## Работа с JSON и конвертация валют
+
+Файл с операциями лежит в `data/operations.json`.
+
+Модуль `src/utils.py` — функция `get_transactions(path)` читает JSON-файл и
+возвращает список транзакций. Если файл не найден, пустой или содержит не
+список, возвращается пустой список.
+
+Модуль `src/external_api.py` — функция `convert_to_rub(transaction)`
+возвращает сумму транзакции в рублях (`float`). Суммы в USD и EUR
+конвертируются по текущему курсу через
+[Exchange Rates Data API](https://apilayer.com/marketplace/exchangerates_data-api).
+
+```python
+from src.external_api import convert_to_rub
+from src.utils import get_transactions
+
+transactions = get_transactions("data/operations.json")
+print(convert_to_rub(transactions[1]))
+```
+
+Для работы конвертации скопируйте шаблон `.env.example` в `.env` и укажите
+свой ключ API:
+
+```
+API_KEY=ваш_ключ
+```
+
 ## Тестирование
 
 Тесты написаны на `pytest` и лежат в директории `tests/`: для каждого модуля
@@ -118,4 +146,4 @@ poetry run pytest --cov=src --cov-report=html
 ```
 
 Отчет появится в папке `htmlcov/` (откройте `htmlcov/index.html`). Текущее
-покрытие кода в `src/` — 89%.
+покрытие кода в `src/` — 90%.

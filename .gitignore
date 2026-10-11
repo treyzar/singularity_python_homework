@@ -10,3 +10,6 @@ build/
 .mcp.json
 
 .coverage
+
+.env
+.codex/
