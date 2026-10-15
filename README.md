@@ -137,11 +137,36 @@ API_KEY=ваш_ключ
 
 Успешные вызовы пишутся с уровнями DEBUG и INFO, ошибки с уровнем ERROR.
 
+## Чтение CSV и XLSX
+
+Теперь транзакции можно брать не только из JSON, но и из CSV- и XLSX-файлов.
+Файлы лежат в папке `data/`: `transactions.csv` и `transactions_excel.xlsx`.
+
+Модуль `src/readers.py` читает их с помощью `pandas`:
+
+- `read_transactions_from_csv(path)` — читает CSV-файл с разделителем `;`;
+- `read_transactions_from_excel(path)` — читает XLSX-файл.
+
+Обе функции принимают путь к файлу и возвращают список словарей с
+транзакциями. Формат такой же, как в JSON-файле: сумма и валюта лежат во
+вложенном словаре `operationAmount`. Пустые строки пропускаются. Если файла
+нет, возвращается пустой список.
+
+```python
+from src.readers import read_transactions_from_csv, read_transactions_from_excel
+
+transactions = read_transactions_from_csv("data/transactions.csv")
+print(len(transactions))  # 999
+print(transactions[0]["description"])  # Перевод организации
+
+transactions = read_transactions_from_excel("data/transactions_excel.xlsx")
+```
+
 ## Тестирование
 
 Тесты написаны на `pytest` и лежат в директории `tests/`: для каждого модуля
 из `src/` есть отдельный файл (`test_masks.py`, `test_widget.py`,
-`test_processing.py`). Общие тестовые данные вынесены в фикстуры в
+`test_processing.py`, `test_readers.py`). Общие тестовые данные вынесены в фикстуры в
 `tests/conftest.py`, а разные входные данные проверяются через
 `@pytest.mark.parametrize`.
 
@@ -158,4 +183,4 @@ poetry run pytest --cov=src --cov-report=html
 ```
 
 Отчет появится в папке `htmlcov/` (откройте `htmlcov/index.html`). Текущее
-покрытие кода в `src/` — 93%.
+покрытие кода в `src/` — 94%.
