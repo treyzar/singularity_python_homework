@@ -9,3 +9,8 @@ build/
 .claude/
 .mcp.json
 
+.coverage
+
+.env
+.codex/
+logs/
