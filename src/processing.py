@@ -1,3 +1,5 @@
+import re
+from collections import Counter
 from datetime import datetime
 from typing import Any
 
@@ -22,3 +24,24 @@ def sort_by_date(operations: list[dict[str, Any]], reverse: bool = True) -> list
         key=lambda operation: datetime.fromisoformat(operation["date"]),
         reverse=reverse,
     )
+
+
+def process_bank_search(data: list[dict[str, Any]], search: str) -> list[dict[str, Any]]:
+    """Return operations whose description contains the search string.
+
+    The search is case-insensitive and is done with a regular expression, special
+    characters of the search string are matched literally. Operations without a
+    ``description`` key are excluded.
+    """
+    pattern = re.compile(re.escape(search), re.IGNORECASE)
+    return [operation for operation in data if pattern.search(operation.get("description", ""))]
+
+
+def process_bank_operations(data: list[dict[str, Any]], categories: list[str]) -> dict[str, int]:
+    """Return the number of operations in each of the given categories.
+
+    The category of an operation is its ``description``. Every requested category
+    is present in the result, categories without operations have the value 0.
+    """
+    counter = Counter(operation.get("description") for operation in data if operation.get("description") in categories)
+    return {category: counter[category] for category in categories}

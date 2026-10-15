@@ -162,11 +162,61 @@ print(transactions[0]["description"])  # Перевод организации
 transactions = read_transactions_from_excel("data/transactions_excel.xlsx")
 ```
 
+## Поиск и подсчет операций
+
+В модуле `src/processing.py` есть еще две функции:
+
+- `process_bank_search(data, search)` — возвращает операции, в описании
+  которых встречается строка `search`. Поиск выполняется регулярным выражением
+  (библиотека `re`) без учета регистра.
+- `process_bank_operations(data, categories)` — считает с помощью
+  `collections.Counter` количество операций по категориям из поля
+  `description` и возвращает словарь `{категория: количество}`.
+
+```python
+from src.processing import process_bank_operations, process_bank_search
+from src.utils import get_transactions
+
+transactions = get_transactions("data/operations.json")
+process_bank_search(transactions, "перевод")
+process_bank_operations(transactions, ["Перевод организации", "Открытие вклада"])
+# {'Перевод организации': 40, 'Открытие вклада': 10}
+```
+
+## Запуск программы
+
+Функция `main` в модуле `src/main.py` связывает все части проекта в
+консольную программу:
+
+```bash
+poetry run python -m src.main
+```
+
+Программа предлагает выбрать файл с транзакциями (JSON, CSV или XLSX), затем
+статус операций (`EXECUTED`, `CANCELED`, `PENDING`, регистр не важен; при
+неверном статусе запрос повторяется), сортировку по дате, вывод только рублевых
+транзакций и поиск по слову в описании. В конце печатается количество
+найденных операций и их список:
+
+```
+Всего банковских операций в выборке: 2
+
+08.12.2019 Открытие вклада
+Счет **5907
+Сумма: 40542 руб.
+
+12.11.2019 Перевод с карты на карту
+MasterCard 7771 27** **** 3727 -> Visa Platinum 1293 38** **** 9203
+Сумма: 130 USD
+```
+
+Если под условия не подошла ни одна операция, программа сообщает об этом.
+
 ## Тестирование
 
 Тесты написаны на `pytest` и лежат в директории `tests/`: для каждого модуля
 из `src/` есть отдельный файл (`test_masks.py`, `test_widget.py`,
-`test_processing.py`, `test_readers.py`). Общие тестовые данные вынесены в фикстуры в
+`test_processing.py`, `test_readers.py`, `test_main.py`). Общие тестовые данные вынесены в фикстуры в
 `tests/conftest.py`, а разные входные данные проверяются через
 `@pytest.mark.parametrize`.
 
@@ -183,4 +233,4 @@ poetry run pytest --cov=src --cov-report=html
 ```
 
 Отчет появится в папке `htmlcov/` (откройте `htmlcov/index.html`). Текущее
-покрытие кода в `src/` — 94%.
+покрытие кода в `src/` — 95%.
